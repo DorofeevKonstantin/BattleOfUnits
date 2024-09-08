@@ -17,5 +17,9 @@ namespace sw::units
             {
 
             };
+        std::string getType() override
+        {
+            return "Archer";
+        }
     };
 }

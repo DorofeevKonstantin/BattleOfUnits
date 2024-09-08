@@ -44,26 +44,26 @@ int main(int argc, char **argv)
 		parser.add<io::CreateMap>(
 				  [&game](auto command)
 				  {
-					  game->createMap(command.width, command.height);
 					  printDebug(std::cout, command);
+					  game->createMap(command.width, command.height);
 				  })
 			.add<io::SpawnWarrior>(
 				[&game](auto command)
 				{
-					game->spawnUnit(std::make_shared<units::Warrior>(command.unitId, command.x, command.y, command.hp, command.strength));
 					printDebug(std::cout, command);
+					game->spawnUnit(std::make_shared<units::Warrior>(command.unitId, command.x, command.y, command.hp, command.strength));
 				})
 			.add<io::SpawnArcher>(
 				[&game](auto command)
 				{
-					game->spawnUnit(std::make_shared<units::Archer>(command.unitId, command.x, command.y, command.hp, command.agility, command.strength, command.range));
 					printDebug(std::cout, command);
+					game->spawnUnit(std::make_shared<units::Archer>(command.unitId, command.x, command.y, command.hp, command.agility, command.strength, command.range));
 				})
 			.add<io::March>(
 				[&game](auto command)
 				{
-					game->marchUnit(command.unitId, command.targetX, command.targetY);
 					printDebug(std::cout, command);
+					game->marchUnit(command.unitId, command.targetX, command.targetY);
 				});
 		parser.parse(file);
 		game->start();
@@ -72,43 +72,5 @@ int main(int argc, char **argv)
 	{
 		std::cout << e.what() << std::endl;
 	}
-	/*
-	std::cout << "\n\nEvents:\n";
-	EventLog eventLog;
-
-	eventLog.log(1, io::MapCreated{ 10, 10 });
-	eventLog.log(1, io::UnitSpawned{ 1, "Warrior", 0, 0 });
-	eventLog.log(1, io::UnitSpawned{ 2, "Archer", 9, 0 });
-	eventLog.log(1, io::MarchStarted{ 1, 0, 0, 9, 0 });
-	eventLog.log(1, io::MarchStarted{ 2, 9, 0, 0, 0 });
-	eventLog.log(1, io::UnitSpawned{ 3, "Warrior", 0, 9 });
-	eventLog.log(1, io::MarchStarted{ 3, 0, 9, 0, 0 });
-
-	eventLog.log(2, io::UnitMoved{ 1, 1, 0 });
-	eventLog.log(2, io::UnitMoved{ 2, 8, 0 });
-	eventLog.log(2, io::UnitMoved{ 3, 0, 8 });
-
-	eventLog.log(3, io::UnitMoved{ 1, 2, 0 });
-	eventLog.log(3, io::UnitMoved{ 2, 7, 0 });
-	eventLog.log(3, io::UnitMoved{ 3, 0, 7 });
-
-	eventLog.log(4, io::UnitMoved{ 1, 3, 0 });
-	eventLog.log(4, io::UnitAttacked{ 2, 1, 5, 0 });
-	eventLog.log(4, io::UnitDied{ 1 });
-	eventLog.log(4, io::UnitMoved{ 3, 0, 6 });
-
-	eventLog.log(5, io::UnitMoved{ 2, 6, 0 });
-	eventLog.log(5, io::UnitMoved{ 3, 0, 5 });
-
-	eventLog.log(6, io::UnitMoved{ 2, 5, 0 });
-	eventLog.log(6, io::UnitMoved{ 3, 0, 4 });
-
-	eventLog.log(7, io::UnitMoved{ 2, 4, 0 });
-	eventLog.log(7, io::UnitAttacked{ 2, 3, 5, 5 });
-	eventLog.log(7, io::UnitMoved{ 3, 0, 3 });
-
-	eventLog.log(8, io::UnitAttacked{ 2, 3, 5, 0 });
-	eventLog.log(8, io::UnitDied{ 3 });
-	*/
 	return 0;
 }
