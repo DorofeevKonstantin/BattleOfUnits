@@ -3,10 +3,13 @@
 #include <list>
 #include <string>
 #include <memory>
+#include <utility>
+#include <optional>
 
 #include <IO/System/EventLog.hpp>
 #include <UNITS/Unit.hpp>
 #include <MAP/Map.hpp>
+#include <LOGIC/Logic.hpp>
 
 namespace sw::game
 {
@@ -17,20 +20,37 @@ namespace sw::game
         std::unique_ptr<map::Map> _map;
         std::list<std::shared_ptr<units::Unit>> _units;
         std::unique_ptr<EventLog> _eventLog;
+
         bool endOfSimulation()
         {
             return true;
         };
+        std::pair<uint32_t, uint32_t> findWay(std::shared_ptr<units::Unit> attacker, std::shared_ptr<units::Unit> target)
+        {
+            return std::make_pair<uint32_t, uint32_t>(1, 2);
+        }
+        std::optional<std::shared_ptr<units::Unit>> findEnemy(std::shared_ptr<units::Unit> attacker)
+        {
+            for (auto unit : _units)
+            {
+                // find less by hp or by id
+                return unit;
+            }
+            return {};
+        }
         void round()
         {
             for (auto unit : _units)
             {
-                /*
                 auto enemy = findEnemy(unit);
-                auto way = findWay(unit, enemy);
-                if (!way)
-                    unit->attack(enemy);
-                */
+                if (enemy)
+                {
+                    if (!unit->attack(*enemy))
+                    {
+                        auto [x, y] = findWay(unit, *enemy);
+                        _map->placeUnit(unit->getId(), x, y);
+                    }
+                }
             }
             ++_round;
             _eventLog->print();
