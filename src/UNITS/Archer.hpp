@@ -4,27 +4,38 @@
 
 namespace sw::units
 {
-    class Archer : public Unit
+    class Archer : public Warrior
     {
-    private:
-        uint32_t _agility;
-        uint32_t _strength;
-        uint32_t _range;
     protected:
+        uint32_t _agility;
+        uint32_t _range;
         bool rangeAttack(std::shared_ptr<Unit> target)
         {
-            return true;
+            bool result = false;
+            if (!this->targetLocatedInRadius(target, 1))
+            {
+                if (this->targetLocatedInRadius(target, _range))
+                {
+                    target->getDamage(this->_agility);
+                }
+            }
+            return result;
         }
 
     public:
-        Archer(uint32_t unitId, uint32_t x, uint32_t y, uint32_t hp, uint32_t agility, uint32_t strength, uint32_t range) : Unit(unitId, x, y, hp), _agility(agility), _strength(strength), _range(range) {};
+        Archer(uint32_t unitId, uint32_t x, uint32_t y, uint32_t hp, uint32_t agility, uint32_t strength, uint32_t range) : Warrior(unitId, x, y, hp, strength), _agility(agility), _range(range) {};
         std::string getType() override
         {
             return "Archer";
         }
         bool attack(std::shared_ptr<Unit> target) override
         {
-            return true;
+            bool result = false;
+            if (rangeAttack(target))
+                result = true;
+            else if (meleeAttack(target))
+                result = true;
+            return result;
         }
     };
 }

@@ -6,12 +6,17 @@ namespace sw::units
 {
     class Warrior : public Unit
     {
-    private:
-        uint32_t _strength{};
     protected:
+        uint32_t _strength;
         bool meleeAttack(std::shared_ptr<Unit> target)
         {
-            return true;
+            bool result = false;
+            if (this->targetLocatedInRadius(target, 1))
+            {
+                target->getDamage(this->_strength);
+                result = true;
+            }
+            return result;
         }
 
     public:
@@ -22,7 +27,7 @@ namespace sw::units
         }
         bool attack(std::shared_ptr<Unit> target) override
         {
-            return true;
+            return meleeAttack(target);
         }
     };
 }
