@@ -9,13 +9,14 @@ namespace sw::units
     protected:
         uint32_t _agility;
         uint32_t _range;
-        bool rangeAttack(std::shared_ptr<Unit> target)
+        uint32_t rangeAttack(std::shared_ptr<Unit> target)
         {
-            bool result = false;
+            uint32_t result = 0;
             if (!this->targetLocatedInRadius(target, 1))
             {
                 if (this->targetLocatedInRadius(target, _range))
                 {
+                    result = this->_agility;
                     target->getDamage(this->_agility);
                 }
             }
@@ -28,13 +29,11 @@ namespace sw::units
         {
             return "Archer";
         }
-        bool attack(std::shared_ptr<Unit> target) override
+        uint32_t attack(std::shared_ptr<Unit> target) override
         {
-            bool result = false;
-            if (rangeAttack(target))
-                result = true;
-            else if (meleeAttack(target))
-                result = true;
+            uint32_t result = rangeAttack(target);
+            if (result == 0)
+                result = meleeAttack(target);
             return result;
         }
     };

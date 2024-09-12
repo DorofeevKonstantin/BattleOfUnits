@@ -18,32 +18,39 @@ namespace sw::map
     public:
         Map(uint32_t width, uint32_t height) : _width(width), _height(height)
         {
-            _field.resize(_width);
-            for (uint32_t i = 0; i < _width; ++i)
+            _field.resize(_height);
+            for (uint32_t i = 0; i < _height; ++i)
             {
-                _field[i].resize(_height);
-                for (uint32_t j = 0; j < _height; ++j)
+                _field[i].resize(_width);
+                for (uint32_t j = 0; j < _width; ++j)
                     _field[i][j] = 0;
             }
         };
-        bool placeUnit(uint32_t unitId, uint32_t x, uint32_t y)
+        bool placeUnit(std::shared_ptr<units::Unit> unit, uint32_t targetX, uint32_t targetY)
         {
-            bool placed = true;
-            if (_field[x][y] == 0)
-                _field[x][y] = unitId;
-            else
-                placed = false;
+            bool placed = false;
+            if (_field[targetY][targetX] == 0)
+            {
+                uint32_t currentX = unit->getX();
+                uint32_t currentY = unit->getY();
+                _field[targetY][targetX] = unit->getId();
+                unit->setX(targetX);
+                unit->setY(targetY);
+                if (currentX != targetX || currentY != targetY)
+                    _field[currentY][currentX] = 0;
+                placed = true;
+            }
             return placed;
         }
-        void checkMap()
+        void printMap()
         {
-            for (uint32_t i = 0; i < _width; ++i)
+            for (uint32_t i = 0; i < _height; ++i)
             {
-                for (uint32_t j = 0; j < _height; ++j)
+                for (uint32_t j = 0; j < _width; ++j)
                 {
-                    std::cout<<_field[i][j]<<" ";
+                    std::cout << _field[i][j] << " ";
                 }
-                std::cout<<std::endl;
+                std::cout << std::endl;
             }
         }
     };

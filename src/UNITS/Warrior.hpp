@@ -8,13 +8,13 @@ namespace sw::units
     {
     protected:
         uint32_t _strength;
-        bool meleeAttack(std::shared_ptr<Unit> target)
+        uint32_t meleeAttack(std::shared_ptr<Unit> target)
         {
-            bool result = false;
+            uint32_t result = 0;
             if (this->targetLocatedInRadius(target, 1))
             {
                 target->getDamage(this->_strength);
-                result = true;
+                result = this->_strength;
             }
             return result;
         }
@@ -25,7 +25,7 @@ namespace sw::units
         {
             return "Warrior";
         }
-        bool attack(std::shared_ptr<Unit> target) override
+        uint32_t attack(std::shared_ptr<Unit> target) override
         {
             return meleeAttack(target);
         }

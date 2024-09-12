@@ -21,11 +21,15 @@ namespace sw::game
         uint32_t _round = 1;
         std::unique_ptr<map::Map> _map;
         std::list<std::shared_ptr<units::Unit>> _units;
-        std::unique_ptr<EventLog> _eventLog;
+        std::shared_ptr<EventLog> _eventLog;
 
         void checkDeads()
         {
-            // std::cout << "_units.size == " << _units.size() << std::endl;
+            for (auto unit : _units)
+            {
+                if (unit->getHp() == 0)
+                    _eventLog->collect(_round, io::UnitDied{unit->getId()});
+            }
             _units.remove_if([](std::shared_ptr<units::Unit> unit)
                              { return unit->getHp() == 0; });
         }
@@ -40,16 +44,16 @@ namespace sw::game
         };
         std::pair<uint32_t, uint32_t> findWay(std::shared_ptr<units::Unit> attacker, std::shared_ptr<units::Unit> target)
         {
-            // std::cout << "findWay: " << attacker->getId() << " -> " << target->getId() << std::endl;
             uint32_t xMove = 0, yMove = 0;
-            if (attacker->getX() < target->getX())
-                xMove = 1;
-            else if (attacker->getX() > target->getX())
-                xMove = -1;
-            else if (attacker->getY() < target->getY())
+            if (attacker->getY() < target->getY())
                 yMove = 1;
+            else if (attacker->getX() < target->getX())
+                xMove = 1;
             else if (attacker->getY() > target->getY())
                 yMove = -1;
+            else if (attacker->getX() > target->getX())
+                xMove = -1;
+
             return std::make_pair<uint32_t, uint32_t>(attacker->getX() + xMove, attacker->getY() + yMove);
         }
         std::optional<std::shared_ptr<units::Unit>> findEnemy(std::shared_ptr<units::Unit> attacker)
@@ -86,32 +90,26 @@ namespace sw::game
         }
         void round()
         {
-            std::cout << "round: " << _round << std::endl;
+            ++_round;
             for (auto unit : _units)
             {
                 auto enemy = findEnemy(unit);
                 if (enemy)
                 {
-                    if (!unit->attack(*enemy))
+                    uint32_t damagedone = unit->attack(*enemy);
+                    if (damagedone == 0)
                     {
                         uint32_t currentX = unit->getX();
                         uint32_t currentY = unit->getY();
                         auto [x, y] = findWay(unit, *enemy);
-                        // std::cout << "unit: " << unit->getId() << " x,y : " << x << "," << y << std::endl;
-                        if (_map->placeUnit(unit->getId(), x, y))
-                        {
+                        if (_map->placeUnit(unit, x, y))
                             _eventLog->collect(_round, io::UnitMoved{unit->getId(), x, y});
-                            _map->placeUnit(0, currentX, currentY);
-                        }
                     }
                     else
-                        std::cout << "enemy attacked" << std::endl;
+                        _eventLog->collect(_round, io::UnitAttacked{unit->getId(), (*enemy)->getId(), damagedone, (*enemy)->getHp()});
                 }
-                else
-                    std::cout << "enemy not finded" << std::endl;
             }
-            _map->checkMap();
-            ++_round;
+            //_map->printMap();
         }
         std::shared_ptr<units::Unit> findUnit(uint32_t unitId)
         {
@@ -127,15 +125,15 @@ namespace sw::game
     public:
         Game()
         {
-            _eventLog = std::make_unique<EventLog>();
+            _eventLog = std::make_shared<EventLog>();
         };
         ~Game()
         {
-            std::cout << "\n\nEvents:\n";
             _eventLog->print();
         };
         void start()
         {
+            std::cout << "\n\nEvents:\n";
             while (!endOfSimulation())
             {
                 round();
@@ -151,19 +149,16 @@ namespace sw::game
         void spawnUnit(std::shared_ptr<units::Unit> unit)
         {
             _units.push_back(unit);
-            _map->placeUnit(unit->getId(), unit->getX(), unit->getY());
-            _eventLog->collect(_round, io::UnitSpawned{unit->getId(), unit->getType(), 0, 0});
+            _map->placeUnit(unit, unit->getX(), unit->getY());
+            _eventLog->collect(_round, io::UnitSpawned{unit->getId(), unit->getType(), unit->getX(), unit->getY()});
         };
-        void marchUnit(uint32_t unitId, uint32_t width, uint32_t height)
+        void marchUnit(uint32_t unitId, uint32_t targetX, uint32_t targetY)
         {
             auto unit = findUnit(unitId);
             uint32_t currentX = unit->getX();
             uint32_t currentY = unit->getY();
-            if (_map->placeUnit(unitId, width, height))
-            {
-                _eventLog->collect(_round, io::MarchStarted{unitId, unit->getX(), unit->getY(), width, height});
-                _map->placeUnit(0, currentX, currentY);
-            }
+            _map->placeUnit(unit, targetX, targetY);
+            _eventLog->collect(_round, io::MarchStarted{unitId, currentX, currentY, targetX, targetY});
         }
     };
 }
