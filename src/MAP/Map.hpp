@@ -26,6 +26,10 @@ namespace sw::map
                     _field[i][j] = 0;
             }
         };
+        void clearCell(uint32_t targetX, uint32_t targetY)
+        {
+            _field[targetY][targetX] = 0;
+        }
         bool placeUnit(std::shared_ptr<units::Unit> unit, uint32_t targetX, uint32_t targetY)
         {
             bool placed = false;

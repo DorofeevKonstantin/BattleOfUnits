@@ -28,7 +28,10 @@ namespace sw::game
             for (auto unit : _units)
             {
                 if (unit->getHp() == 0)
+                {
+                    _map->clearCell(unit->getX(), unit->getY());
                     _eventLog->collect(_round, io::UnitDied{unit->getId()});
+                }
             }
             _units.remove_if([](std::shared_ptr<units::Unit> unit)
                              { return unit->getHp() == 0; });
