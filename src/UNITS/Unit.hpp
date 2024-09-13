@@ -19,9 +19,7 @@ namespace sw::units
             bool result = false;
             uint32_t distanceX = (this->getX() > target->getX()) ? this->getX() - target->getX() : target->getX() - this->getX();
             uint32_t distanceY = (this->getY() > target->getY()) ? this->getY() - target->getY() : target->getY() - this->getY();
-            if ((distanceX + distanceY) <= radius)
-                result = true;
-            if (distanceX == distanceY == radius)
+            if ((distanceX <= radius) && (distanceY <= radius))
                 result = true;
             return result;
         }

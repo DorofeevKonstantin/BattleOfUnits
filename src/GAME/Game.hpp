@@ -45,14 +45,15 @@ namespace sw::game
         std::pair<uint32_t, uint32_t> findWay(std::shared_ptr<units::Unit> attacker, std::shared_ptr<units::Unit> target)
         {
             uint32_t xMove = 0, yMove = 0;
-            if (attacker->getY() < target->getY())
-                yMove = 1;
-            else if (attacker->getX() < target->getX())
-                xMove = 1;
-            else if (attacker->getY() > target->getY())
+            if (attacker->getY() > target->getY())
                 yMove = -1;
             else if (attacker->getX() > target->getX())
                 xMove = -1;
+            else if (attacker->getY() < target->getY())
+                yMove = 1;
+            else if (attacker->getX() < target->getX())
+                xMove = 1;
+
 
             return std::make_pair<uint32_t, uint32_t>(attacker->getX() + xMove, attacker->getY() + yMove);
         }
