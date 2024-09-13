@@ -1,27 +1,19 @@
 #pragma once
 
 #include <list>
-#include <string>
 #include <memory>
+#include <optional>
+#include <limits>
 
-#include <IO/System/EventLog.hpp>
 #include <UNITS/Unit.hpp>
-#include <MAP/Map.hpp>
 
-namespace sw::game
+namespace sw::logic
 {
     class Logic
     {
-    private:
-        
     public:
-        Logic()
-        {
-            
-        };
-        virtual ~Logic()
-        {
-            
-        };
+        Logic() {};
+        virtual std::optional<std::shared_ptr<units::Unit>> findEnemy(const std::list<std::shared_ptr<units::Unit>> &units, std::shared_ptr<units::Unit> attacker) = 0;
+        virtual ~Logic() {};
     };
 }

@@ -1,25 +1,14 @@
 #pragma once
 
-#include <list>
-#include <string>
-#include <memory>
-
 #include <LOGIC/Logic.hpp>
 
-namespace sw::game
+namespace sw::logic
 {
     class WeakestEnemyLogic : public Logic
     {
-    private:
-        
     public:
-        WeakestEnemyLogic()
-        {
-            
-        };
-        ~WeakestEnemyLogic()
-        {
-            
-        };
+        WeakestEnemyLogic() = default;
+        ~WeakestEnemyLogic() = default;
+        std::optional<std::shared_ptr<units::Unit>> findEnemy(const std::list<std::shared_ptr<units::Unit>> &units, std::shared_ptr<units::Unit> attacker) override;
     };
 }

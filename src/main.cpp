@@ -1,26 +1,15 @@
 #include <iostream>
 #include <fstream>
-#include <typeinfo>
 #include <memory>
+#include <exception>
 
 #include <IO/System/CommandParser.hpp>
 #include <IO/System/PrintDebug.hpp>
-#include <IO/Commands/CreateMap.hpp>
-#include <IO/Commands/SpawnWarrior.hpp>
-#include <IO/Commands/SpawnArcher.hpp>
-#include <IO/Commands/March.hpp>
-#include <IO/System/EventLog.hpp>
-#include <IO/Events/MapCreated.hpp>
-#include <IO/Events/UnitSpawned.hpp>
-#include <IO/Events/MarchStarted.hpp>
-#include <IO/Events/MarchEnded.hpp>
-#include <IO/Events/UnitMoved.hpp>
-#include <IO/Events/UnitDied.hpp>
-#include <IO/Events/UnitAttacked.hpp>
 
 #include <UNITS/Unit.hpp>
 #include <UNITS/Warrior.hpp>
 #include <UNITS/Archer.hpp>
+
 #include <GAME/Game.hpp>
 
 int main(int argc, char **argv)
@@ -38,7 +27,7 @@ int main(int argc, char **argv)
 
 	try
 	{
-		std::unique_ptr<game::Game> game = std::make_unique<game::Game>();
+		std::shared_ptr<game::Game> game = std::make_shared<game::Game>();
 		std::cout << "Commands:\n";
 		io::CommandParser parser;
 		parser.add<io::CreateMap>(
