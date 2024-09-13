@@ -38,8 +38,6 @@ namespace sw::game
             bool result = false;
             if (_units.empty() || _units.size() == 1)
                 result = true;
-            if (_round > 10)
-                result = true;
             return result;
         };
         std::pair<uint32_t, uint32_t> findWay(std::shared_ptr<units::Unit> attacker, std::shared_ptr<units::Unit> target)
@@ -53,7 +51,6 @@ namespace sw::game
                 yMove = 1;
             else if (attacker->getX() < target->getX())
                 xMove = 1;
-
 
             return std::make_pair<uint32_t, uint32_t>(attacker->getX() + xMove, attacker->getY() + yMove);
         }
@@ -110,7 +107,6 @@ namespace sw::game
                         _eventLog->collect(_round, io::UnitAttacked{unit->getId(), (*enemy)->getId(), damagedone, (*enemy)->getHp()});
                 }
             }
-            //_map->printMap();
         }
         std::shared_ptr<units::Unit> findUnit(uint32_t unitId)
         {
